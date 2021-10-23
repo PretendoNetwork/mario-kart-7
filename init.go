@@ -1,8 +1,6 @@
 package main
 
-import (
-	//"io/ioutil"
-)
+//"io/ioutil"
 
 var hmacSecret []byte
 
@@ -13,4 +11,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}*/
+
+	config, _ = ImportConfigFromFile("secure.config")
+	connectMongo()
 }

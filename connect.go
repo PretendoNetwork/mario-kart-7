@@ -34,4 +34,8 @@ func connect(packet *nex.PacketV1) {
 
 	packet.Sender().UpdateRC4Key(sessionKey)
 	packet.Sender().SetSessionKey(sessionKey)
+
+	if !doesUserExist(userPID) {
+		addNewUser(userPID)
+	}
 }

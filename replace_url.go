@@ -6,6 +6,8 @@ import (
 )
 
 func replaceURL(err error, client *nex.Client, callID uint32, oldStation *nex.StationURL, newStation *nex.StationURL) {
+	updatePlayerSessionUrl(client.PID(), oldStation.EncodeToString(), newStation.EncodeToString())
+
 	rmcResponse := nex.NewRMCResponse(nexproto.SecureProtocolID, callID)
 	rmcResponse.SetSuccess(nexproto.SecureMethodReplaceURL, nil)
 

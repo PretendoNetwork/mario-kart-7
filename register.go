@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+
 	nex "github.com/PretendoNetwork/nex-go"
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
@@ -15,8 +16,8 @@ func register(err error, client *nex.Client, callID uint32, stationUrls []*nex.S
 
 	address := client.Address().IP.String()
 	port := strconv.Itoa(client.Address().Port)
-	natf := "2"
-	natm := "1"
+	natf := "0"
+	natm := "0"
 	type_ := "3"
 
 	localStation.SetAddress(&address)
@@ -26,6 +27,12 @@ func register(err error, client *nex.Client, callID uint32, stationUrls []*nex.S
 	localStation.SetType(&type_)
 
 	globalStationURL := localStation.EncodeToString()
+
+	if !doesSessionExist(client.PID()) {
+		addPlayerSession(client.PID(), []string{localStationURL, globalStationURL}, address, port)
+	} else {
+		updatePlayerSessionAll(client.PID(), []string{localStationURL, globalStationURL}, address, port)
+	}
 
 	rmcResponseStream := nex.NewStreamOut(nexServer)
 

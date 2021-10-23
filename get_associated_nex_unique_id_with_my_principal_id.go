@@ -1,11 +1,6 @@
 package main
 
-import (
-	nex "github.com/PretendoNetwork/nex-go"
-	nexproto "github.com/PretendoNetwork/nex-protocols-go"
-)
-
-func getAssociatedNexUniqueIdWithMyPrincipalId(err error, client *nex.Client, callID uint32) {
+/*func getAssociatedNexUniqueIdWithMyPrincipalId(err error, client *nex.Client, callID uint32) {
 	rmcResponseStream := nex.NewStreamOut(nexServer)
 
 	rmcResponseStream.WriteUInt64LE(0)
@@ -31,3 +26,4 @@ func getAssociatedNexUniqueIdWithMyPrincipalId(err error, client *nex.Client, ca
 
 	nexServer.Send(responsePacket)
 }
+*/

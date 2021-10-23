@@ -2,28 +2,30 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	nex "github.com/PretendoNetwork/nex-go"
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
 
 type MatchmakingData struct {
-	matchmakeSession    *nexproto.MatchmakeSession
-	clients             []*nex.Client
+	matchmakeSession *nexproto.MatchmakeSession
+	clients          []*nex.Client
 }
 
 var nexServer *nex.Server
 var secureServer *nexproto.SecureProtocol
 var MatchmakingState []*MatchmakingData
+var config *ServerConfig
 
 func main() {
 	MatchmakingState = append(MatchmakingState, nil)
 
 	nexServer = nex.NewServer()
 	nexServer.SetPrudpVersion(1)
-	nexServer.SetNexVersion(30500)
+	nexServer.SetNexVersion(config.NexVersion)
 	nexServer.SetKerberosKeySize(32)
-	nexServer.SetAccessKey("25dbf96a")
+	nexServer.SetAccessKey(config.AccessKey)
 
 	nexServer.On("Data", func(packet *nex.PacketV1) {
 		request := packet.RMCRequest()
@@ -36,12 +38,12 @@ func main() {
 
 	secureServer = nexproto.NewSecureProtocol(nexServer)
 	natTraversalProtocolServer := nexproto.NewNatTraversalProtocol(nexServer)
-	utilityProtocolServer := nexproto.NewUtilityProtocol(nexServer)
 	matchmakeExtensionProtocolServer := nexproto.NewMatchmakeExtensionProtocol(nexServer)
 	matchMakingProtocolServer := nexproto.NewMatchMakingProtocol(nexServer)
+	matchMakingExtProtocolServer := nexproto.NewMatchMakingExtProtocol(nexServer)
 	rankingProtocolServer := nexproto.NewRankingProtocol(nexServer)
 
-	//needed for the datastore method MK7 contacts when first going online (just needs a response of some kind)
+	// have datastore available if called, but respond as unimplemented
 	dataStorePrococolServer := nexproto.NewDataStoreProtocol(nexServer)
 	_ = dataStorePrococolServer
 
@@ -50,17 +52,30 @@ func main() {
 
 	secureServer.Register(register)
 	secureServer.ReplaceURL(replaceURL)
+	secureServer.SendReport(sendReport)
 
 	natTraversalProtocolServer.RequestProbeInitiationExt(requestProbeInitiationExt)
 	natTraversalProtocolServer.ReportNatProperties(reportNatProperties)
 
-	utilityProtocolServer.GetAssociatedNexUniqueIdWithMyPrincipalId(getAssociatedNexUniqueIdWithMyPrincipalId)
-
 	matchmakeExtensionProtocolServer.AutoMatchmakeWithSearchCriteria_Postpone(autoMatchmakeWithSearchCriteria_Postpone)
 
 	matchMakingProtocolServer.GetSessionURLs(getSessionURLs)
-	
+	matchMakingProtocolServer.UpdateSessionHostV1(updateSessionHostV1)
+
+	matchMakingExtProtocolServer.EndParticipation(endParticipation)
+
 	rankingProtocolServer.UploadCommonData(uploadCommonData)
 
-	nexServer.Listen(":60003")
+	nexServer.Listen(":" + config.ServerPort)
+}
+
+// Modified version of https://gist.github.com/ryanfitz/4191392
+
+// will eventually be used to occasionally check for disconnected clients
+// so as to clean their session info out of the database
+func doEvery(d time.Duration, f func()) {
+	for x := range time.Tick(d) {
+		x = x
+		f()
+	}
 }

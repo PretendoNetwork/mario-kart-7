@@ -1,40 +1,16 @@
 package main
 
 import (
-	"strconv"
-	"fmt"
 	nex "github.com/PretendoNetwork/nex-go"
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
 
 func getSessionURLs(err error, client *nex.Client, callID uint32, gatheringId uint32) {
 	var stationUrlStrings []string
-	fmt.Println(gatheringId)
-	for _, gatheringClient := range MatchmakingState[gatheringId].clients {
-		if(gatheringClient.PID() == MatchmakingState[gatheringId].matchmakeSession.Gathering.HostPID){
-			var localStation nex.StationURL
-			localStation.FromString(gatheringClient.LocalStationUrl())
-			rvcId := strconv.Itoa(int(gatheringClient.ConnectionId()))
-			pid := strconv.Itoa(int(MatchmakingState[gatheringId].matchmakeSession.Gathering.HostPID))
-			localStation.SetRVCID(&rvcId)
-			localStation.SetPid(&pid)
 
-			stationUrlStrings = append(stationUrlStrings, localStation.EncodeToString())
-			var globalStation nex.StationURL
-			globalStation.FromString("prudp:/address=0.0.0.0;port=0;PID=0;RVCID=6723910;natf=2;natm=1;pmp=0;sid=15;type=3;upnp=0")
+	hostpid, _, _, _, _ := getRoomInfo(gatheringId)
 
-			address := gatheringClient.Address().IP.String()
-			port := strconv.Itoa(gatheringClient.Address().Port)
-
-			globalStation.SetPid(&pid)
-			globalStation.SetAddress(&address)
-			globalStation.SetPort(&port)
-			globalStation.SetRVCID(&rvcId)
-
-			stationURL := globalStation.EncodeToString()
-			stationUrlStrings = append(stationUrlStrings, stationURL)
-		}
-	}
+	stationUrlStrings = getPlayerUrls(hostpid)
 
 	rmcResponseStream := nex.NewStreamOut(nexServer)
 	rmcResponseStream.WriteListString(stationUrlStrings)
