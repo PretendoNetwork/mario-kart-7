@@ -3,11 +3,19 @@ package main
 import (
 	nex "github.com/PretendoNetwork/nex-go"
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
+	"fmt"
+	"encoding/hex"
 )
 
-func uploadCommonData(err error, client *nex.Client, callID uint32, commonData []byte, uniqueID uint64) {
-	rmcResponse := nex.NewRMCResponse(nexproto.RankingProtocolID, callID)
-	rmcResponse.SetSuccess(nexproto.RankingMethodUploadCommonData, nil)
+func findOfficialCommunity(err error, client *nex.Client, callID uint32, isAvailableOnly bool, resultRange *nex.ResultRange) {
+	rmcResponseStream := nex.NewStreamOut(nexServer)
+	rmcResponseStream.WriteUInt32LE(0)
+
+	rmcResponseBody := rmcResponseStream.Bytes()
+	fmt.Println(hex.EncodeToString(rmcResponseBody))
+
+	rmcResponse := nex.NewRMCResponse(nexproto.MatchmakeExtensionProtocolID, callID)
+	rmcResponse.SetSuccess(nexproto.MatchmakeExtensionMethodFindOfficialCommunity, rmcResponseBody)
 
 	rmcResponseBytes := rmcResponse.Bytes()
 

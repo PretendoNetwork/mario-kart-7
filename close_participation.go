@@ -5,9 +5,11 @@ import (
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
 
-func uploadCommonData(err error, client *nex.Client, callID uint32, commonData []byte, uniqueID uint64) {
-	rmcResponse := nex.NewRMCResponse(nexproto.RankingProtocolID, callID)
-	rmcResponse.SetSuccess(nexproto.RankingMethodUploadCommonData, nil)
+func closeParticipation(err error, client *nex.Client, callID uint32, gatheringId uint32) {
+	//destroyRoom(gatheringId)
+
+	rmcResponse := nex.NewRMCResponse(nexproto.MatchmakeExtensionProtocolID, callID)
+	rmcResponse.SetSuccess(nexproto.MatchmakeExtensionMethodCloseParticipation, nil)
 
 	rmcResponseBytes := rmcResponse.Bytes()
 

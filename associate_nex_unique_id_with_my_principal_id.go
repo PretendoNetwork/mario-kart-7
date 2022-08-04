@@ -1,13 +1,12 @@
 package main
-
 import (
 	nex "github.com/PretendoNetwork/nex-go"
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
 
-func uploadCommonData(err error, client *nex.Client, callID uint32, commonData []byte, uniqueID uint64) {
-	rmcResponse := nex.NewRMCResponse(nexproto.RankingProtocolID, callID)
-	rmcResponse.SetSuccess(nexproto.RankingMethodUploadCommonData, nil)
+func associateNexUniqueIDsWithMyPrincipalID(err error, client *nex.Client, callID uint32, uniqueIDInfo []*nexproto.UniqueIDInfo) {
+	rmcResponse := nex.NewRMCResponse(nexproto.UtilityProtocolID, callID)
+	rmcResponse.SetSuccess(nexproto.UtilityMethodAssociateNexUniqueIdsWithMyPrincipalId, nil)
 
 	rmcResponseBytes := rmcResponse.Bytes()
 
@@ -24,3 +23,4 @@ func uploadCommonData(err error, client *nex.Client, callID uint32, commonData [
 
 	nexServer.Send(responsePacket)
 }
+

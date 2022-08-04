@@ -4,7 +4,7 @@ import (
 	nex "github.com/PretendoNetwork/nex-go"
 )
 
-func connect(packet *nex.PacketV1) {
+func connect(packet *nex.PacketV0) {
 	payload := packet.Payload()
 
 	stream := nex.NewStreamIn(payload, nexServer)

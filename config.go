@@ -14,20 +14,23 @@ type ServerConfig struct {
 	KerberosKeySize       int
 	AccessKey             string
 	NexVersion            int
-	DatabaseIP            string
-	DatabasePort          string
+	NEXDatabaseIP         string
+	NEXDatabasePort       string
+	AccountDatabaseIP     string
+	AccountDatabasePort   string
 	DatabaseUseAuth       bool
 	DatabaseUsername      string
 	DatabasePassword      string
 	AccountDatabase       string
 	PNIDCollection        string
 	NexAccountsCollection string
-	MK8Database           string
+	SplatoonDatabase      string
 	RoomsCollection       string
 	SessionsCollection    string
 	UsersCollection       string
 	RegionsCollection     string
-	TournamentsCollection string
+	CommunitiesCollection string
+	SubscriptionsCollection string
 }
 
 func ImportConfigFromFile(path string) (*ServerConfig, error) {
@@ -79,11 +82,17 @@ func ImportConfigFromFile(path string) (*ServerConfig, error) {
 				return nil, err
 			}
 			break
-		case "DatabaseIP":
-			config.DatabaseIP = index[1]
+		case "AccountDatabaseIP":
+			config.AccountDatabaseIP = index[1]
 			break
-		case "DatabasePort":
-			config.DatabasePort = index[1]
+		case "AccountDatabasePort":
+			config.AccountDatabasePort = index[1]
+			break
+		case "NEXDatabaseIP":
+			config.NEXDatabaseIP = index[1]
+			break
+		case "NEXDatabasePort":
+			config.NEXDatabasePort = index[1]
 			break
 		case "DatabaseUseAuth":
 			config.DatabaseUseAuth = (index[1] == "true")
@@ -103,8 +112,8 @@ func ImportConfigFromFile(path string) (*ServerConfig, error) {
 		case "NexAccountsCollection":
 			config.NexAccountsCollection = index[1]
 			break
-		case "MK8Database":
-			config.MK8Database = index[1]
+		case "SplatoonDatabase":
+			config.SplatoonDatabase = index[1]
 			break
 		case "RoomsCollection":
 			config.RoomsCollection = index[1]
@@ -118,8 +127,11 @@ func ImportConfigFromFile(path string) (*ServerConfig, error) {
 		case "RegionsCollection":
 			config.RegionsCollection = index[1]
 			break
-		case "TournamentsCollection":
-			config.TournamentsCollection = index[1]
+		case "CommunitiesCollection":
+			config.CommunitiesCollection = index[1]
+			break
+		case "SubscriptionsCollection":
+			config.SubscriptionsCollection = index[1]
 			break
 		default:
 			break

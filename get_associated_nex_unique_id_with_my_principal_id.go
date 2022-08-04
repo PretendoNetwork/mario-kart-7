@@ -1,6 +1,10 @@
 package main
+import (
+	nex "github.com/PretendoNetwork/nex-go"
+	nexproto "github.com/PretendoNetwork/nex-protocols-go"
+)
 
-/*func getAssociatedNexUniqueIdWithMyPrincipalId(err error, client *nex.Client, callID uint32) {
+func getAssociatedNexUniqueIDWithMyPrincipalID(err error, client *nex.Client, callID uint32) {
 	rmcResponseStream := nex.NewStreamOut(nexServer)
 
 	rmcResponseStream.WriteUInt64LE(0)
@@ -13,7 +17,7 @@ package main
 
 	rmcResponseBytes := rmcResponse.Bytes()
 
-	responsePacket, _ := nex.NewPacketV1(client, nil)
+	responsePacket, _ := nex.NewPacketV0(client, nil)
 
 	responsePacket.SetVersion(1)
 	responsePacket.SetSource(0xA1)
@@ -26,4 +30,4 @@ package main
 
 	nexServer.Send(responsePacket)
 }
-*/
+

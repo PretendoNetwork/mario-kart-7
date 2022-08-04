@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"math"
 	"strconv"
@@ -10,14 +9,6 @@ import (
 	nexproto "github.com/PretendoNetwork/nex-protocols-go"
 )
 
-var regionList = []string{"Worldwide", "Japan", "United States", "Europe", "Korea", "China", "Taiwan"}
-var gameModes = []string{"VS Race", "Battle"}
-var ccList = []string{"Unk", "200cc", "50cc", "100cc", "150cc", "Mirror", "BattleCC"}
-var itemModes = []string{"Unk1", "Unk2", "Unk3", "Unk4", "Unk5", "Normal", "Unk7", "All Items", "Shells Only", "Bananas Only", "Mushrooms Only", "Bob-ombs Only", "No Items", "No Items or Coins", "Frantic"}
-var vehicleModes = []string{"All Vehicles", "Karts Only", "Bikes Only"}
-var controllerModes = []string{"Unk", "Tilt Only", "All Controls"}
-var dlcModes = []string{"No DLC", "DLC Pack 1 Only", "DLC Pack 2 Only", "Both DLC Packs"}
-
 func autoMatchmakeWithSearchCriteria_Postpone(err error, client *nex.Client, callID uint32, searchCriteria []*nexproto.MatchmakeSessionSearchCriteria, matchmakeSession *nexproto.MatchmakeSession, message string) {
 
 	gameConfig := matchmakeSession.Attributes[2]
@@ -25,19 +16,19 @@ func autoMatchmakeWithSearchCriteria_Postpone(err error, client *nex.Client, cal
 	fmt.Println("===== MATCHMAKE SESSION JOIN =====")
 	fmt.Println("REGION: " + regionList[matchmakeSession.Attributes[3]])
 	fmt.Println("GAME MODE: " + gameModes[matchmakeSession.GameMode])
-	fmt.Println("CC: " + ccList[gameConfig%0b111])
+	//fmt.Println("CC: " + ccList[gameConfig%0b111])
 	gameConfig = gameConfig >> 12
 	fmt.Println("DLC MODE: " + dlcModes[matchmakeSession.Attributes[5]&0xF])
-	fmt.Println("ITEM MODE: " + itemModes[gameConfig%0b1111])
+	//fmt.Println("ITEM MODE: " + itemModes[gameConfig%0b1111])
 	gameConfig = gameConfig >> 8
-	fmt.Println("VEHICLE MODE: " + vehicleModes[gameConfig%0b11])
+	//fmt.Println("VEHICLE MODE: " + vehicleModes[gameConfig%0b11])
 	gameConfig = gameConfig >> 4
-	fmt.Println("CONTROLLER MODE: " + controllerModes[gameConfig%0b11])
+	//fmt.Println("CONTROLLER MODE: " + controllerModes[gameConfig%0b11])
 	fmt.Println("HAVE GUEST PLAYER: " + strconv.FormatBool(searchCriteria[0].VacantParticipants > 1))
 
-	gid := findRoom(matchmakeSession.GameMode, true, matchmakeSession.Attributes[3], matchmakeSession.Attributes[2], uint32(searchCriteria[0].VacantParticipants), matchmakeSession.Attributes[5]&0xF)
+	gid := findRoom(matchmakeSession.GameMode, true, matchmakeSession.Attributes[3], matchmakeSession.Attributes[2], uint32(searchCriteria[0].VacantParticipants), matchmakeSession.Attributes[5]&0xF, matchmakeSession.Attributes[0])
 	if gid == math.MaxUint32 {
-		gid = newRoom(client.PID(), matchmakeSession.GameMode, true, matchmakeSession.Attributes[3], matchmakeSession.Attributes[2], uint32(searchCriteria[0].VacantParticipants), matchmakeSession.Attributes[5]&0xF)
+		gid = newRoom(client.PID(), matchmakeSession.GameMode, true, matchmakeSession.Attributes[3], matchmakeSession.Attributes[2], uint32(searchCriteria[0].VacantParticipants), matchmakeSession.Attributes[5]&0xF, matchmakeSession.Attributes[0])
 	}
 
 	addPlayerToRoom(gid, client.PID(), uint32(searchCriteria[0].VacantParticipants))
@@ -73,7 +64,7 @@ func autoMatchmakeWithSearchCriteria_Postpone(err error, client *nex.Client, cal
 
 	rmcResponseBytes := rmcResponse.Bytes()
 
-	responsePacket, _ := nex.NewPacketV1(client, nil)
+	responsePacket, _ := nex.NewPacketV0(client, nil)
 
 	responsePacket.SetVersion(1)
 	responsePacket.SetSource(0xA1)
@@ -97,53 +88,7 @@ func endParticipation(err error, client *nex.Client, callID uint32, idGathering 
 
 	rmcResponseBytes := rmcResponse.Bytes()
 
-	responsePacket, _ := nex.NewPacketV1(client, nil)
-
-	responsePacket.SetVersion(1)
-	responsePacket.SetSource(0xA1)
-	responsePacket.SetDestination(0xAF)
-	responsePacket.SetType(nex.DataPacket)
-	responsePacket.SetPayload(rmcResponseBytes)
-
-	responsePacket.AddFlag(nex.FlagNeedsAck)
-	responsePacket.AddFlag(nex.FlagReliable)
-
-	nexServer.Send(responsePacket)
-}
-
-func sendReport(err error, client *nex.Client, callID uint32, reportID uint32, reportData []byte) {
-	fmt.Println("Report ID: " + strconv.Itoa(int(reportID)))
-	fmt.Println("Report Data: " + hex.EncodeToString(reportData))
-
-	rmcResponse := nex.NewRMCResponse(nexproto.SecureProtocolID, callID)
-	rmcResponse.SetSuccess(nexproto.SecureMethodSendReport, nil)
-
-	rmcResponseBytes := rmcResponse.Bytes()
-
-	responsePacket, _ := nex.NewPacketV1(client, nil)
-
-	responsePacket.SetVersion(1)
-	responsePacket.SetSource(0xA1)
-	responsePacket.SetDestination(0xAF)
-	responsePacket.SetType(nex.DataPacket)
-	responsePacket.SetPayload(rmcResponseBytes)
-
-	responsePacket.AddFlag(nex.FlagNeedsAck)
-	responsePacket.AddFlag(nex.FlagReliable)
-
-	nexServer.Send(responsePacket)
-}
-
-func updateSessionHostV1(err error, client *nex.Client, callID uint32, gid uint32) {
-
-	updateRoomHost(gid, client.PID())
-
-	rmcResponse := nex.NewRMCResponse(nexproto.MatchMakingProtocolID, callID)
-	rmcResponse.SetSuccess(nexproto.MatchMakingMethodUpdateSessionHostV1, nil)
-
-	rmcResponseBytes := rmcResponse.Bytes()
-
-	responsePacket, _ := nex.NewPacketV1(client, nil)
+	responsePacket, _ := nex.NewPacketV0(client, nil)
 
 	responsePacket.SetVersion(1)
 	responsePacket.SetSource(0xA1)

@@ -4,43 +4,50 @@ import (
 	"context"
 	"strconv"
 	"time"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mongoClient *mongo.Client
-var mongoContext context.Context
+var nexMongoClient *mongo.Client
+var accountMongoClient *mongo.Client
+var nexMongoContext context.Context
+var accountMongoContext context.Context
 var accountDatabase *mongo.Database
-var mk8Database *mongo.Database
+var splatoonDatabase *mongo.Database
 var pnidCollection *mongo.Collection
 var nexAccountsCollection *mongo.Collection
 var regionsCollection *mongo.Collection
 var usersCollection *mongo.Collection
 var sessionsCollection *mongo.Collection
 var roomsCollection *mongo.Collection
-var tourneysCollection *mongo.Collection
+var communitiesCollection *mongo.Collection
 
 func connectMongo() {
 	if config.DatabaseUseAuth {
-		mongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.DatabaseUsername + ":" + config.DatabasePassword + "@" + config.DatabaseIP + ":" + config.DatabasePort + "/"))
+		nexMongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.DatabaseUsername + ":" + config.DatabasePassword + "@" + config.NEXDatabaseIP + ":" + config.NEXDatabasePort + "/"))
+		accountMongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.DatabaseUsername + ":" + config.DatabasePassword + "@" + config.AccountDatabaseIP + ":" + config.AccountDatabasePort + "/"))
 	} else {
-		mongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.DatabaseIP + ":" + config.DatabasePort + "/"))
+		nexMongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.NEXDatabaseIP + ":" + config.NEXDatabasePort + "/"))
+		accountMongoClient, _ = mongo.NewClient(options.Client().ApplyURI("mongodb://" + config.AccountDatabaseIP + ":" + config.AccountDatabasePort + "/"))
 	}
-	mongoContext, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	_ = mongoClient.Connect(mongoContext)
+	nexMongoContext, _ = context.WithTimeout(context.Background(), 10*time.Second)
+	_ = nexMongoClient.Connect(nexMongoContext)
+	accountMongoContext, _ = context.WithTimeout(context.Background(), 10*time.Second)
+	_ = accountMongoClient.Connect(accountMongoContext)
 
-	accountDatabase = mongoClient.Database(config.AccountDatabase)
+	accountDatabase = accountMongoClient.Database(config.AccountDatabase)
 	pnidCollection = accountDatabase.Collection(config.PNIDCollection)
 	nexAccountsCollection = accountDatabase.Collection(config.NexAccountsCollection)
 
-	mk8Database = mongoClient.Database(config.MK8Database)
-	regionsCollection = mk8Database.Collection(config.RegionsCollection)
-	usersCollection = mk8Database.Collection(config.UsersCollection)
-	sessionsCollection = mk8Database.Collection(config.SessionsCollection)
-	roomsCollection = mk8Database.Collection(config.RoomsCollection)
-	tourneysCollection = mk8Database.Collection(config.TournamentsCollection)
+	splatoonDatabase = nexMongoClient.Database(config.SplatoonDatabase)
+	regionsCollection = splatoonDatabase.Collection(config.RegionsCollection)
+	usersCollection = splatoonDatabase.Collection(config.UsersCollection)
+	sessionsCollection = splatoonDatabase.Collection(config.SessionsCollection)
+	roomsCollection = splatoonDatabase.Collection(config.RoomsCollection)
+	communitiesCollection = splatoonDatabase.Collection(config.CommunitiesCollection)
 
 	sessionsCollection.DeleteMany(context.TODO(), bson.D{})
 	roomsCollection.DeleteMany(context.TODO(), bson.D{})
@@ -112,17 +119,17 @@ func doesUserExist(pid uint32) bool {
 	}
 }
 
-func addPlayerSession(pid uint32, urls []string, ip string, port string) {
-	_, err := sessionsCollection.InsertOne(context.TODO(), bson.D{{"pid", pid}, {"urls", urls}, {"ip", ip}, {"port", port}})
+func addPlayerSession(rvcid uint32, urls []string, ip string, port string) {
+	_, err := sessionsCollection.InsertOne(context.TODO(), bson.D{{"rvcid", rvcid}, {"urls", urls}, {"ip", ip}, {"port", port}})
 	if err != nil {
 		panic(err)
 	}
 }
 
-func doesSessionExist(pid uint32) bool {
+func doesSessionExist(rvcid uint32) bool {
 	var result bson.M
 
-	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"pid", pid}}, options.FindOne()).Decode(&result)
+	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"rvcid", rvcid}}, options.FindOne()).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return false
@@ -134,17 +141,17 @@ func doesSessionExist(pid uint32) bool {
 	}
 }
 
-func updatePlayerSessionAll(pid uint32, urls []string, ip string, port string) {
-	_, err := sessionsCollection.UpdateOne(context.TODO(), bson.D{{"pid", pid}}, bson.D{{"$set", bson.D{{"pid", pid}, {"urls", urls}, {"ip", ip}, {"port", port}}}})
+func updatePlayerSessionAll(rvcid uint32, urls []string, ip string, port string) {
+	_, err := sessionsCollection.UpdateOne(context.TODO(), bson.D{{"rvcid", rvcid}}, bson.D{{"$set", bson.D{{"rvcid", rvcid}, {"urls", urls}, {"ip", ip}, {"port", port}}}})
 	if err != nil {
 		panic(err)
 	}
 }
 
-func updatePlayerSessionUrl(pid uint32, oldurl string, newurl string) {
+func updatePlayerSessionUrl(rvcid uint32, oldurl string, newurl string) {
 	var result bson.M
 
-	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"pid", pid}}, options.FindOne()).Decode(&result)
+	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"rvcid", rvcid}}, options.FindOne()).Decode(&result)
 	if err != nil {
 		panic(err)
 	}
@@ -159,23 +166,23 @@ func updatePlayerSessionUrl(pid uint32, oldurl string, newurl string) {
 		}
 	}
 
-	_, err = sessionsCollection.UpdateOne(context.TODO(), bson.D{{"pid", pid}}, bson.D{{"$set", bson.D{{"urls", newurlArray}}}})
+	_, err = sessionsCollection.UpdateOne(context.TODO(), bson.D{{"rvcid", rvcid}}, bson.D{{"$set", bson.D{{"urls", newurlArray}}}})
 	if err != nil {
 		panic(err)
 	}
 }
 
-func deletePlayerSession(pid uint32) {
-	_, err := sessionsCollection.DeleteOne(context.TODO(), bson.D{{"pid", pid}})
+func deletePlayerSession(rvcid uint32) {
+	_, err := sessionsCollection.DeleteOne(context.TODO(), bson.D{{"rvcid", rvcid}})
 	if err != nil {
 		panic(err)
 	}
 }
 
-func getPlayerUrls(pid uint32) []string {
+func getPlayerUrls(rvcid uint32) []string {
 	var result bson.M
 
-	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"pid", pid}}, options.FindOne()).Decode(&result)
+	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"rvcid", rvcid}}, options.FindOne()).Decode(&result)
 	if err != nil {
 		panic(err)
 	}
@@ -183,18 +190,20 @@ func getPlayerUrls(pid uint32) []string {
 	oldurlArray := result["urls"].(bson.A)
 	newurlArray := make([]string, len(oldurlArray))
 	for i := 0; i < len(oldurlArray); i++ {
+		fmt.Println(oldurlArray[i].(string))
 		newurlArray[i] = oldurlArray[i].(string)
 	}
 
 	return newurlArray
 }
 
-func getPlayerSessionAddress(pid uint32) string {
+func getPlayerSessionAddress(rvcid uint32) string {
 	var result bson.M
 
-	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"pid", pid}}, options.FindOne()).Decode(&result)
+	err := sessionsCollection.FindOne(context.TODO(), bson.D{{"rvcid", rvcid}}, options.FindOne()).Decode(&result)
 	if err != nil {
-		panic(err)
+		panic(rvcid)
+		//panic(err)
 	}
 
 	return result["ip"].(string) + ":" + result["port"].(string)

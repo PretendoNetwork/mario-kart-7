@@ -18,3 +18,9 @@ build
 
 # config file
 secure.config
+
+# built server
+mk7-secure
+
+# logs
+log/*
