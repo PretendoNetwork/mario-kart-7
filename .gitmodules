@@ -1,0 +1,6 @@
+[submodule "mk7-authentication"]
+	path = mk7-authentication
+	url = https://github.com/PretendoNetwork/mk7-authentication
+[submodule "mk7-secure"]
+	path = mk7-secure
+	url = https://github.com/PretendoNetwork/mk7-secure
