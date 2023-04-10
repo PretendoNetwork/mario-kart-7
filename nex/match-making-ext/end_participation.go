@@ -10,10 +10,14 @@ import (
 func EndParticipation(err error, client *nex.Client, callID uint32, idGathering uint32, strMessage string) {
 	database.RemovePlayerFromRoom(idGathering, client.PID())
 
-	returnval := []byte{0x1}
+	rmcResponseStream := nex.NewStreamOut(globals.NEXServer)
+
+	rmcResponseStream.WriteBool(true) // %retval%
+
+	rmcResponseBody := rmcResponseStream.Bytes()
 
 	rmcResponse := nex.NewRMCResponse(match_making_ext.ProtocolID, callID)
-	rmcResponse.SetSuccess(match_making_ext.MethodEndParticipation, returnval)
+	rmcResponse.SetSuccess(match_making_ext.MethodEndParticipation, rmcResponseBody)
 
 	rmcResponseBytes := rmcResponse.Bytes()
 

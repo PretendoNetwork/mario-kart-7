@@ -16,6 +16,13 @@ func StartNEXServer() {
 		Minor: 4,
 		Patch: 17,
 	})
+
+	// We don't know the extact Matchmaking version, we only know is below 3.0
+	globals.NEXServer.SetMatchMakingProtocolVersion(&nex.NEXVersion{
+		Major: 2,
+		Minor: 0,
+		Patch: 0,
+	})
 	globals.NEXServer.SetKerberosKeySize(32)
 	globals.NEXServer.SetAccessKey(globals.Config.AccessKey)
 	globals.NEXServer.SetPingTimeout(999)
@@ -24,7 +31,7 @@ func StartNEXServer() {
 	globals.NEXServer.On("Data", func(packet *nex.PacketV0) {
 		request := packet.RMCRequest()
 
-		fmt.Println("==MK8 - Secure==")
+		fmt.Println("==MK7 - Secure==")
 		fmt.Printf("Protocol ID: %#v\n", request.ProtocolID())
 		fmt.Printf("Method ID: %#v\n", request.MethodID())
 		fmt.Printf("Method ID: %#v\n", globals.NEXServer.NEXVersion())
