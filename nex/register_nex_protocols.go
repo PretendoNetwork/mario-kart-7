@@ -17,7 +17,6 @@ func registerNEXProtocols() {
 	matchmakeExtensionProtocol := matchmake_extension.NewMatchmakeExtensionProtocol(globals.NEXServer)
 
 	matchmakeExtensionProtocol.CloseParticipation(nex_matchmake_extension.CloseParticipation)
-	matchmakeExtensionProtocol.AutoMatchmakeWithParam_Postpone(nex_matchmake_extension.AutoMatchmakeWithParam_Postpone)
 	matchmakeExtensionProtocol.AutoMatchmake_Postpone(nex_matchmake_extension.AutoMatchmake_Postpone)
 	matchmakeExtensionProtocol.GetPlayingSession(nex_matchmake_extension.GetPlayingSession)
 	matchmakeExtensionProtocol.CreateCommunity(nex_matchmake_extension.CreateCommunity)
@@ -26,8 +25,6 @@ func registerNEXProtocols() {
 	matchmakeExtensionProtocol.FindCommunityByParticipant(nex_matchmake_extension.FindCommunityByParticipant)
 	matchmakeExtensionProtocol.GetSimpleCommunity(nex_matchmake_extension.GetSimpleCommunity)
 	matchmakeExtensionProtocol.UpdateProgressScore(nex_matchmake_extension.UpdateProgressScore)
-	matchmakeExtensionProtocol.CreateMatchmakeSessionWithParam(nex_matchmake_extension.CreateMatchmakeSessionWithParam)
-	matchmakeExtensionProtocol.JoinMatchmakeSessionWithParam(nex_matchmake_extension.JoinMatchmakeSessionWithParam)
 
 	matchMakingExtProtocol := match_making_ext.NewMatchMakingExtProtocol(globals.NEXServer)
 

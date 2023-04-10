@@ -7,6 +7,8 @@ import (
 )
 
 func GetAssociatedNexUniqueIDWithMyPrincipalID(err error, client *nex.Client, callID uint32) {
+	// TODO - This method has a different behavior on MK7 compared to the docs.
+	// Find out what are the request and response contents
 	rmcResponseStream := nex.NewStreamOut(globals.NEXServer)
 
 	rmcResponseStream.WriteUInt64LE(0)
