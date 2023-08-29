@@ -4,9 +4,9 @@ go 1.19
 
 require (
 	github.com/PretendoNetwork/grpc-go v1.0.2
-	github.com/PretendoNetwork/nex-go v1.0.36
+	github.com/PretendoNetwork/nex-go v1.0.37
 	github.com/PretendoNetwork/nex-protocols-common-go v1.0.26
-	github.com/PretendoNetwork/nex-protocols-go v1.0.50
+	github.com/PretendoNetwork/nex-protocols-go v1.0.51
 	github.com/PretendoNetwork/plogger-go v1.0.4
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/grpc v1.57.0
