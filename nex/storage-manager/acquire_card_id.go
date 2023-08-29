@@ -1,4 +1,4 @@
-package nex_utility
+package nex_storage_manager
 
 import (
 	"github.com/PretendoNetwork/mario-kart-7/globals"
