@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/PretendoNetwork/grpc-go/account"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
+	"github.com/PretendoNetwork/mario-kart-7/database"
 	"github.com/PretendoNetwork/plogger-go"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -25,6 +26,7 @@ func init() {
 		globals.Logger.Warning("Error loading .env file")
 	}
 
+	postgresURI := os.Getenv("PN_MK7_POSTGRES_URI")
 	kerberosPassword := os.Getenv("PN_MK7_KERBEROS_PASSWORD")
 	authenticationServerPort := os.Getenv("PN_MK7_AUTHENTICATION_SERVER_PORT")
 	secureServerHost := os.Getenv("PN_MK7_SECURE_SERVER_HOST")
@@ -32,6 +34,11 @@ func init() {
 	accountGRPCHost := os.Getenv("PN_MK7_ACCOUNT_GRPC_HOST")
 	accountGRPCPort := os.Getenv("PN_MK7_ACCOUNT_GRPC_PORT")
 	accountGRPCAPIKey := os.Getenv("PN_MK7_ACCOUNT_GRPC_API_KEY")
+
+	if strings.TrimSpace(postgresURI) == "" {
+		globals.Logger.Error("PN_MK7_POSTGRES_URI environment variable not set")
+		os.Exit(0)
+	}
 
 	if strings.TrimSpace(kerberosPassword) == "" {
 		globals.Logger.Warningf("PN_MK7_KERBEROS_PASSWORD environment variable not set. Using default password: %q", globals.KerberosPassword)
@@ -103,5 +110,5 @@ func init() {
 		"X-API-Key", accountGRPCAPIKey,
 	)
 
-	// database.ConnectPostgres()
+	database.ConnectPostgres()
 }

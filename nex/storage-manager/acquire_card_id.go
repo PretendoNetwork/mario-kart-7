@@ -1,6 +1,8 @@
 package nex_storage_manager
 
 import (
+	"math/rand"
+
 	"github.com/PretendoNetwork/mario-kart-7/globals"
 	nex "github.com/PretendoNetwork/nex-go"
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
@@ -12,9 +14,11 @@ func AcquireCardID(err error, client *nex.Client, callID uint32) uint32 {
 		return nex.Errors.Core.Unknown
 	}
 
+	cardID := rand.Uint64()
+
 	rmcResponseStream := nex.NewStreamOut(globals.SecureServer)
 
-	rmcResponseStream.WriteUInt64LE(1) // Card ID
+	rmcResponseStream.WriteUInt64LE(cardID)
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 

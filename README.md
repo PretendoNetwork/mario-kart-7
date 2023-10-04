@@ -46,6 +46,7 @@ All configuration options are handled via environment variables
 
 | Name                                | Description                                                                                                            | Required                                      |
 |-------------------------------------|------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| `PN_MK7_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/mk7?sslmode=disable`)     | Yes                                           |
 | `PN_MK7_KERBEROS_PASSWORD`          | Password used as part of the internal server data in Kerberos tickets                                                  | No (Default password `password` will be used) |
 | `PN_MK7_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                     | Yes                                           |
 | `PN_MK7_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                        | Yes                                           |

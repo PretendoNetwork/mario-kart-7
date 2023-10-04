@@ -11,11 +11,7 @@ import (
 func StartSecureServer() {
 	globals.SecureServer = nex.NewServer()
 	globals.SecureServer.SetPRUDPVersion(0)
-	globals.SecureServer.SetDefaultNEXVersion(&nex.NEXVersion{
-		Major: 2,
-		Minor: 4,
-		Patch: 3,
-	})
+	globals.SecureServer.SetDefaultNEXVersion(nex.NewNEXVersion(2, 4, 3))
 
 	globals.SecureServer.SetAccessKey("6181dff1")
 	globals.SecureServer.SetKerberosPassword(globals.KerberosPassword)

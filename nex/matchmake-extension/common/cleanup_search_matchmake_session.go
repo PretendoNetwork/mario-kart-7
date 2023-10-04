@@ -1,4 +1,4 @@
-package nex_matchmake_extension
+package nex_matchmake_extension_common
 
 import (
 	matchmaking_types "github.com/PretendoNetwork/nex-protocols-go/match-making/types"

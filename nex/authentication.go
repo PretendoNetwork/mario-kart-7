@@ -13,11 +13,7 @@ var serverBuildString string
 func StartAuthenticationServer() {
 	globals.AuthenticationServer = nex.NewServer()
 	globals.AuthenticationServer.SetPRUDPVersion(0)
-	globals.SecureServer.SetDefaultNEXVersion(&nex.NEXVersion{
-		Major: 2,
-		Minor: 4,
-		Patch: 3,
-	})
+	globals.AuthenticationServer.SetDefaultNEXVersion(nex.NewNEXVersion(2, 4, 3))
 
 	globals.AuthenticationServer.SetKerberosPassword(globals.KerberosPassword)
 	globals.AuthenticationServer.SetAccessKey("6181dff1")

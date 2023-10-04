@@ -1,6 +1,9 @@
 package nex_storage_manager
 
 import (
+	"database/sql"
+
+	"github.com/PretendoNetwork/mario-kart-7/database"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
 	nex "github.com/PretendoNetwork/nex-go"
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
@@ -12,10 +15,33 @@ func ActivateWithCardID(err error, client *nex.Client, callID uint32, unknown ui
 		return nex.Errors.Core.InvalidArgument
 	}
 
+	// * It's not guaranteed that the client will call AcquireCardID,
+	// * because that method is only called the first time the client
+	// * goes online, and it may have used official servers previously.
+	// *
+	// * To workaround this, we ignore the card ID stuff and get the
+	// * unique ID using the PID
+	var firstTime bool
+	uniqueID, err := database.GetUniqueIDByOwnerPID(client.PID())
+	if err != nil && err != sql.ErrNoRows {
+		globals.Logger.Critical(err.Error())
+		return nex.Errors.Core.Unknown
+	}
+
+	if err == sql.ErrNoRows {
+		uniqueID, err = database.InsertCommonDataByOwnerPID(client.PID())
+		if err != nil {
+			globals.Logger.Critical(err.Error())
+			return nex.Errors.Core.Unknown
+		}
+
+		firstTime = true
+	}
+
 	rmcResponseStream := nex.NewStreamOut(globals.SecureServer)
 
-	rmcResponseStream.WriteUInt32LE(1) // Unique ID
-	rmcResponseStream.WriteBool(false) // First time
+	rmcResponseStream.WriteUInt32LE(uniqueID)
+	rmcResponseStream.WriteBool(firstTime)
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 

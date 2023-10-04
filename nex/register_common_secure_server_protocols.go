@@ -8,7 +8,7 @@ import (
 	nattraversal "github.com/PretendoNetwork/nex-protocols-common-go/nat-traversal"
 	secure "github.com/PretendoNetwork/nex-protocols-common-go/secure-connection"
 
-	nex_matchmake_extension "github.com/PretendoNetwork/mario-kart-7/nex/matchmake-extension"
+	nex_matchmake_extension_common "github.com/PretendoNetwork/mario-kart-7/nex/matchmake-extension/common"
 )
 
 func registerCommonSecureServerProtocols() {
@@ -24,7 +24,7 @@ func registerCommonSecureServerProtocols() {
 	matchMakingCommonExtProtocol := matchmaking_ext.NewCommonMatchMakingExtProtocol(globals.SecureServer)
 	_ = matchMakingCommonExtProtocol
 
-	matchmakeExtensionProtocol := matchmake_extension.NewCommonMatchmakeExtensionProtocol(globals.SecureServer, "")
+	matchmakeExtensionProtocol := matchmake_extension.NewCommonMatchmakeExtensionProtocol(globals.SecureServer)
 
-	matchmakeExtensionProtocol.CleanupSearchMatchmakeSession(nex_matchmake_extension.CleanupSearchMatchmakeSession)
+	matchmakeExtensionProtocol.CleanupSearchMatchmakeSession(nex_matchmake_extension_common.CleanupSearchMatchmakeSession)
 }
