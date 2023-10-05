@@ -12,17 +12,13 @@
 *.out
 
 # custom
-build
 .env
 *.key
 go.work
 go.work.sum
 
-# config file
-secure.config
-
 # built server
-mario-kart-7-secure
+build
 
 # logs
 log
