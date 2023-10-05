@@ -4,7 +4,7 @@ import (
 	"github.com/PretendoNetwork/mario-kart-7/globals"
 	matchmake_extension "github.com/PretendoNetwork/nex-protocols-common-go/matchmake-extension"
 	matchmaking "github.com/PretendoNetwork/nex-protocols-common-go/matchmaking"
-	matchmaking_ext "github.com/PretendoNetwork/nex-protocols-common-go/matchmaking-ext"
+	match_making_ext "github.com/PretendoNetwork/nex-protocols-common-go/matchmaking-ext"
 	nattraversal "github.com/PretendoNetwork/nex-protocols-common-go/nat-traversal"
 	secure "github.com/PretendoNetwork/nex-protocols-common-go/secure-connection"
 
@@ -12,17 +12,13 @@ import (
 )
 
 func registerCommonSecureServerProtocols() {
-	secureConnectionCommonProtocol := secure.NewCommonSecureConnectionProtocol(globals.SecureServer)
-	_ = secureConnectionCommonProtocol
+	secure.NewCommonSecureConnectionProtocol(globals.SecureServer)
 
-	natTraversalCommonProtocol := nattraversal.NewCommonNATTraversalProtocol(globals.SecureServer)
-	_ = natTraversalCommonProtocol
+	nattraversal.NewCommonNATTraversalProtocol(globals.SecureServer)
 
-	matchMakingCommonProtocol := matchmaking.NewCommonMatchMakingProtocol(globals.SecureServer)
-	_ = matchMakingCommonProtocol
+	matchmaking.NewCommonMatchMakingProtocol(globals.SecureServer)
 
-	matchMakingCommonExtProtocol := matchmaking_ext.NewCommonMatchMakingExtProtocol(globals.SecureServer)
-	_ = matchMakingCommonExtProtocol
+	match_making_ext.NewCommonMatchMakingExtProtocol(globals.SecureServer)
 
 	matchmakeExtensionProtocol := matchmake_extension.NewCommonMatchmakeExtensionProtocol(globals.SecureServer)
 
