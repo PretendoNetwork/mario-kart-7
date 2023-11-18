@@ -9,11 +9,13 @@ import (
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
 )
 
-func ActivateWithCardID(err error, client *nex.Client, callID uint32, unknown uint8, cardID uint64) uint32 {
+func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, unknown uint8, cardID uint64) (*nex.RMCMessage, uint32) {
 	if err != nil {
 		globals.Logger.Error(err.Error())
-		return nex.Errors.Core.InvalidArgument
+		return nil, nex.Errors.Core.InvalidArgument
 	}
+
+	client := packet.Sender()
 
 	// * It's not guaranteed that the client will call AcquireCardID,
 	// * because that method is only called the first time the client
@@ -22,17 +24,17 @@ func ActivateWithCardID(err error, client *nex.Client, callID uint32, unknown ui
 	// * To workaround this, we ignore the card ID stuff and get the
 	// * unique ID using the PID
 	var firstTime bool
-	uniqueID, err := database.GetUniqueIDByOwnerPID(client.PID())
+	uniqueID, err := database.GetUniqueIDByOwnerPID(client.PID().LegacyValue())
 	if err != nil && err != sql.ErrNoRows {
 		globals.Logger.Critical(err.Error())
-		return nex.Errors.Core.Unknown
+		return nil, nex.Errors.Core.Unknown
 	}
 
 	if err == sql.ErrNoRows {
-		uniqueID, err = database.InsertCommonDataByOwnerPID(client.PID())
+		uniqueID, err = database.InsertCommonDataByOwnerPID(client.PID().LegacyValue())
 		if err != nil {
 			globals.Logger.Critical(err.Error())
-			return nex.Errors.Core.Unknown
+			return nil, nex.Errors.Core.Unknown
 		}
 
 		firstTime = true
@@ -45,23 +47,10 @@ func ActivateWithCardID(err error, client *nex.Client, callID uint32, unknown ui
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 
-	rmcResponse := nex.NewRMCResponse(storage_manager.ProtocolID, callID)
-	rmcResponse.SetSuccess(storage_manager.MethodActivateWithCardID, rmcResponseBody)
+	rmcResponse := nex.NewRMCSuccess(rmcResponseBody)
+	rmcResponse.ProtocolID = storage_manager.ProtocolID
+	rmcResponse.MethodID = storage_manager.MethodActivateWithCardID
+	rmcResponse.CallID = callID
 
-	rmcResponseBytes := rmcResponse.Bytes()
-
-	responsePacket, _ := nex.NewPacketV0(client, nil)
-
-	responsePacket.SetVersion(0)
-	responsePacket.SetSource(0xA1)
-	responsePacket.SetDestination(0xAF)
-	responsePacket.SetType(nex.DataPacket)
-	responsePacket.SetPayload(rmcResponseBytes)
-
-	responsePacket.AddFlag(nex.FlagNeedsAck)
-	responsePacket.AddFlag(nex.FlagReliable)
-
-	globals.SecureServer.Send(responsePacket)
-
-	return 0
+	return rmcResponse, 0
 }

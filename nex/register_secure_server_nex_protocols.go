@@ -17,6 +17,6 @@ func registerSecureServerNEXProtocols() {
 
 	storageManagerProtocol := storage_manager.NewProtocol(globals.SecureServer)
 
-	storageManagerProtocol.AcquireCardID(nex_storage_manager.AcquireCardID)
-	storageManagerProtocol.ActivateWithCardID(nex_storage_manager.ActivateWithCardID)
+	storageManagerProtocol.AcquireCardID = nex_storage_manager.AcquireCardID
+	storageManagerProtocol.ActivateWithCardID = nex_storage_manager.ActivateWithCardID
 }

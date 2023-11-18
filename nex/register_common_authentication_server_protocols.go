@@ -19,7 +19,7 @@ func registerCommonAuthenticationServerProtocols() {
 	secureStationURL.SetAddress(os.Getenv("PN_MK7_SECURE_SERVER_HOST"))
 	secureStationURL.SetPort(uint32(port))
 	secureStationURL.SetCID(1)
-	secureStationURL.SetPID(2)
+	secureStationURL.SetPID(nex.NewPID[uint32](2))
 	secureStationURL.SetSID(1)
 	secureStationURL.SetStream(10)
 	secureStationURL.SetType(2)
@@ -27,5 +27,5 @@ func registerCommonAuthenticationServerProtocols() {
 	ticketGrantingProtocol.SetSecureStationURL(secureStationURL)
 	ticketGrantingProtocol.SetBuildName(serverBuildString)
 
-	globals.AuthenticationServer.SetPasswordFromPIDFunction(globals.PasswordFromPID)
+	globals.AuthenticationServer.PasswordFromPID = globals.PasswordFromPID
 }
