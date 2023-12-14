@@ -7,4 +7,7 @@ import (
 func CleanupSearchMatchmakeSession(matchmakeSession *matchmaking_types.MatchmakeSession) {
 	// Cleanup VR
 	matchmakeSession.Attributes[1] = 0
+
+	// Cleanup participation count
+	matchmakeSession.ParticipationCount = 0
 }

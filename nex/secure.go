@@ -11,7 +11,7 @@ import (
 
 func StartSecureServer() {
 	globals.SecureServer = nex.NewPRUDPServer()
-	globals.SecureServer.IsSecureServer = true
+	globals.SecureServer.SecureVirtualServerPorts = []uint8{1}
 	globals.SecureServer.PRUDPVersion = 0
 	globals.SecureServer.SetDefaultLibraryVersion(nex.NewLibraryVersion(2, 4, 3))
 
