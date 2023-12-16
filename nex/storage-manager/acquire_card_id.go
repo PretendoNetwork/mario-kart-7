@@ -22,7 +22,7 @@ func AcquireCardID(err error, packet nex.PacketInterface, callID uint32) (*nex.R
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 
-	rmcResponse := nex.NewRMCSuccess(rmcResponseBody)
+	rmcResponse := nex.NewRMCSuccess(globals.SecureServer, rmcResponseBody)
 	rmcResponse.ProtocolID = storage_manager.ProtocolID
 	rmcResponse.MethodID = storage_manager.MethodAcquireCardID
 	rmcResponse.CallID = callID

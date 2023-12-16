@@ -47,7 +47,7 @@ func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, un
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 
-	rmcResponse := nex.NewRMCSuccess(rmcResponseBody)
+	rmcResponse := nex.NewRMCSuccess(globals.SecureServer, rmcResponseBody)
 	rmcResponse.ProtocolID = storage_manager.ProtocolID
 	rmcResponse.MethodID = storage_manager.MethodActivateWithCardID
 	rmcResponse.CallID = callID
