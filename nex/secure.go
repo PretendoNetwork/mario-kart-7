@@ -5,20 +5,23 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/PretendoNetwork/mario-kart-7/globals"
 	nex "github.com/PretendoNetwork/nex-go"
+	"github.com/PretendoNetwork/mario-kart-7/globals"
 )
 
 func StartSecureServer() {
 	globals.SecureServer = nex.NewPRUDPServer()
-	globals.SecureServer.SecureVirtualServerPorts = []uint8{1}
-	globals.SecureServer.PRUDPVersion = 0
+
+	globals.SecureEndpoint = nex.NewPRUDPEndPoint(1)
+	globals.SecureEndpoint.ServerAccount = globals.SecureServerAccount
+	globals.SecureEndpoint.AccountDetailsByPID = globals.AccountDetailsByPID
+	globals.SecureEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
+	globals.SecureServer.BindPRUDPEndPoint(globals.SecureEndpoint)
+
 	globals.SecureServer.SetDefaultLibraryVersion(nex.NewLibraryVersion(2, 4, 3))
-
 	globals.SecureServer.SetAccessKey("6181dff1")
-	globals.SecureServer.SetKerberosPassword([]byte(globals.KerberosPassword))
 
-	globals.SecureServer.OnData(func(packet nex.PacketInterface) {
+	globals.SecureEndpoint.OnData(func(packet nex.PacketInterface) {
 		request := packet.RMCMessage()
 
 		fmt.Println("=== MK7 - Secure ===")

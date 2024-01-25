@@ -4,21 +4,22 @@ import (
 	"math/rand"
 
 	"github.com/PretendoNetwork/mario-kart-7/globals"
-	nex "github.com/PretendoNetwork/nex-go"
+	"github.com/PretendoNetwork/nex-go"
+	"github.com/PretendoNetwork/nex-go/types"
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
 )
 
 func AcquireCardID(err error, packet nex.PacketInterface, callID uint32) (*nex.RMCMessage, uint32) {
 	if err != nil {
 		globals.Logger.Error(err.Error())
-		return nil, nex.Errors.Core.Unknown
+		return nil, nex.ResultCodes.Core.Unknown
 	}
 
-	cardID := rand.Uint64()
+	cardID := types.NewPrimitiveU64(rand.Uint64())
 
-	rmcResponseStream := nex.NewStreamOut(globals.SecureServer)
+	rmcResponseStream := nex.NewByteStreamOut(globals.SecureServer)
 
-	rmcResponseStream.WriteUInt64LE(cardID)
+	cardID.WriteTo(rmcResponseStream)
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 

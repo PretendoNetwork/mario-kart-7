@@ -6,16 +6,20 @@ import (
 	"github.com/PretendoNetwork/mario-kart-7/database"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
 	nex "github.com/PretendoNetwork/nex-go"
+	"github.com/PretendoNetwork/nex-go/types"
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
 )
 
-func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, unknown uint8, cardID uint64) (*nex.RMCMessage, uint32) {
+func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, unknown *types.PrimitiveU8, cardID *types.PrimitiveU64) (*nex.RMCMessage, uint32) {
 	if err != nil {
 		globals.Logger.Error(err.Error())
-		return nil, nex.Errors.Core.InvalidArgument
+		return nil, nex.ResultCodes.Core.InvalidArgument
 	}
 
 	client := packet.Sender()
+
+	uniqueID := types.NewPrimitiveU32(0)
+	firstTime := types.NewPrimitiveBool(false)
 
 	// * It's not guaranteed that the client will call AcquireCardID,
 	// * because that method is only called the first time the client
@@ -23,27 +27,26 @@ func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, un
 	// *
 	// * To workaround this, we ignore the card ID stuff and get the
 	// * unique ID using the PID
-	var firstTime bool
-	uniqueID, err := database.GetUniqueIDByOwnerPID(client.PID().LegacyValue())
+	uniqueID.Value, err = database.GetUniqueIDByOwnerPID(client.PID().LegacyValue())
 	if err != nil && err != sql.ErrNoRows {
 		globals.Logger.Critical(err.Error())
-		return nil, nex.Errors.Core.Unknown
+		return nil, nex.ResultCodes.Core.Unknown
 	}
 
 	if err == sql.ErrNoRows {
-		uniqueID, err = database.InsertCommonDataByOwnerPID(client.PID().LegacyValue())
+		uniqueID.Value, err = database.InsertCommonDataByOwnerPID(client.PID().LegacyValue())
 		if err != nil {
 			globals.Logger.Critical(err.Error())
-			return nil, nex.Errors.Core.Unknown
+			return nil, nex.ResultCodes.Core.Unknown
 		}
 
-		firstTime = true
+		firstTime.Value = true
 	}
 
-	rmcResponseStream := nex.NewStreamOut(globals.SecureServer)
+	rmcResponseStream := nex.NewByteStreamOut(globals.SecureServer)
 
-	rmcResponseStream.WriteUInt32LE(uniqueID)
-	rmcResponseStream.WriteBool(firstTime)
+	uniqueID.WriteTo(rmcResponseStream)
+	firstTime.WriteTo(rmcResponseStream)
 
 	rmcResponseBody := rmcResponseStream.Bytes()
 

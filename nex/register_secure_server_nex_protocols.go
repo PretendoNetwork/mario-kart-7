@@ -10,12 +10,15 @@ import (
 )
 
 func registerSecureServerNEXProtocols() {
-	_ = datastore.NewProtocol(globals.SecureServer)
+	datastoreProtocol := datastore.NewProtocol(globals.SecureServer)
+	globals.SecureEndpoint.RegisterServiceProtocol(datastoreProtocol)
 
 	// TODO - Add legacy ranking protocol!
-	_ = ranking.NewProtocol(globals.SecureServer)
+	rankingProtocol := ranking.NewProtocol(globals.SecureServer)
+	globals.SecureEndpoint.RegisterServiceProtocol(rankingProtocol)
 
 	storageManagerProtocol := storage_manager.NewProtocol(globals.SecureServer)
+	globals.SecureEndpoint.RegisterServiceProtocol(storageManagerProtocol)
 
 	storageManagerProtocol.AcquireCardID = nex_storage_manager.AcquireCardID
 	storageManagerProtocol.ActivateWithCardID = nex_storage_manager.ActivateWithCardID
