@@ -20,8 +20,8 @@ func StartAuthenticationServer() {
 	globals.AuthenticationEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
 	globals.AuthenticationServer.BindPRUDPEndPoint(globals.AuthenticationEndpoint)
 
-	globals.AuthenticationServer.SetDefaultLibraryVersion(nex.NewLibraryVersion(2, 4, 3))
-	globals.AuthenticationServer.SetAccessKey("6181dff1")
+	globals.AuthenticationServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(2, 4, 3))
+	globals.AuthenticationServer.AccessKey = "6181dff1"
 
 	globals.AuthenticationEndpoint.OnData(func(packet nex.PacketInterface) {
 		request := packet.RMCMessage()

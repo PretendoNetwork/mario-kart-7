@@ -10,7 +10,7 @@ import (
 )
 
 func registerCommonAuthenticationServerProtocols() {
-	ticketGrantingProtocol := ticket_granting.NewProtocol(globals.AuthenticationServer)
+	ticketGrantingProtocol := ticket_granting.NewProtocol(globals.AuthenticationEndpoint)
 	globals.AuthenticationEndpoint.RegisterServiceProtocol(ticketGrantingProtocol)
 	commonTicketGrantingProtocol := common_ticket_granting.NewCommonProtocol(ticketGrantingProtocol)
 

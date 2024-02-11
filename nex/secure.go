@@ -18,8 +18,8 @@ func StartSecureServer() {
 	globals.SecureEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
 	globals.SecureServer.BindPRUDPEndPoint(globals.SecureEndpoint)
 
-	globals.SecureServer.SetDefaultLibraryVersion(nex.NewLibraryVersion(2, 4, 3))
-	globals.SecureServer.SetAccessKey("6181dff1")
+	globals.SecureServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(2, 4, 3))
+	globals.SecureServer.AccessKey = "6181dff1"
 
 	globals.SecureEndpoint.OnData(func(packet nex.PacketInterface) {
 		request := packet.RMCMessage()
