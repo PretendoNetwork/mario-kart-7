@@ -17,23 +17,23 @@ import (
 )
 
 func registerCommonSecureServerProtocols() {
-	secureProtocol := secure.NewProtocol(globals.SecureEndpoint)
+	secureProtocol := secure.NewProtocol()
 	globals.SecureEndpoint.RegisterServiceProtocol(secureProtocol)
 	common_secure.NewCommonProtocol(secureProtocol)
 
-	natTraversalProtocol := nat_traversal.NewProtocol(globals.SecureEndpoint)
+	natTraversalProtocol := nat_traversal.NewProtocol()
 	globals.SecureEndpoint.RegisterServiceProtocol(natTraversalProtocol)
 	common_nat_traversal.NewCommonProtocol(natTraversalProtocol)
 
-	matchMakingProtocol := match_making.NewProtocol(globals.SecureEndpoint)
+	matchMakingProtocol := match_making.NewProtocol()
 	globals.SecureEndpoint.RegisterServiceProtocol(matchMakingProtocol)
 	common_match_making.NewCommonProtocol(matchMakingProtocol)
 
-	matchMakingExtProtocol := match_making_ext.NewProtocol(globals.SecureEndpoint)
+	matchMakingExtProtocol := match_making_ext.NewProtocol()
 	globals.SecureEndpoint.RegisterServiceProtocol(matchMakingExtProtocol)
 	common_match_making_ext.NewCommonProtocol(matchMakingExtProtocol)
 
-	matchmakeExtensionProtocol := matchmake_extension.NewProtocol(globals.SecureEndpoint)
+	matchmakeExtensionProtocol := matchmake_extension.NewProtocol()
 	globals.SecureEndpoint.RegisterServiceProtocol(matchmakeExtensionProtocol)
 	commonMatchmakeExtensionProtocol := common_matchmake_extension.NewCommonProtocol(matchmakeExtensionProtocol)
 
