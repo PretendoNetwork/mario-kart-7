@@ -17,6 +17,8 @@ func StartSecureServer() {
 	globals.SecureEndpoint.ServerAccount = globals.SecureServerAccount
 	globals.SecureEndpoint.AccountDetailsByPID = globals.AccountDetailsByPID
 	globals.SecureEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
+	// * The default silence time is too low for Mario Kart 7, so we set a higher value
+	globals.SecureEndpoint.DefaultStreamSettings.MaxSilenceTime = 20000
 	globals.SecureServer.BindPRUDPEndPoint(globals.SecureEndpoint)
 
 	globals.SecureServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(2, 4, 3))

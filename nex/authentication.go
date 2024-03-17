@@ -18,6 +18,8 @@ func StartAuthenticationServer() {
 	globals.AuthenticationEndpoint.ServerAccount = globals.AuthenticationServerAccount
 	globals.AuthenticationEndpoint.AccountDetailsByPID = globals.AccountDetailsByPID
 	globals.AuthenticationEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
+	// * The default silence time is too low for Mario Kart 7, so we set a higher value
+	globals.AuthenticationEndpoint.DefaultStreamSettings.MaxSilenceTime = 20000
 	globals.AuthenticationServer.BindPRUDPEndPoint(globals.AuthenticationEndpoint)
 
 	globals.AuthenticationServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(2, 4, 3))

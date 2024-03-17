@@ -2,11 +2,13 @@ package nex
 
 import (
 	"os"
+	"strconv"
 
-	"github.com/PretendoNetwork/nex-go/types"
-	ticket_granting "github.com/PretendoNetwork/nex-protocols-go/ticket-granting"
-	common_ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/ticket-granting"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
+	"github.com/PretendoNetwork/nex-go/constants"
+	"github.com/PretendoNetwork/nex-go/types"
+	common_ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/ticket-granting"
+	ticket_granting "github.com/PretendoNetwork/nex-protocols-go/ticket-granting"
 )
 
 func registerCommonAuthenticationServerProtocols() {
@@ -14,15 +16,17 @@ func registerCommonAuthenticationServerProtocols() {
 	globals.AuthenticationEndpoint.RegisterServiceProtocol(ticketGrantingProtocol)
 	commonTicketGrantingProtocol := common_ticket_granting.NewCommonProtocol(ticketGrantingProtocol)
 
+	port, _ := strconv.Atoi(os.Getenv("PN_MK7_SECURE_SERVER_PORT"))
+
 	secureStationURL := types.NewStationURL("")
-	secureStationURL.Scheme = "prudps"
-	secureStationURL.Fields["address"] = os.Getenv("PN_MK7_SECURE_SERVER_HOST")
-	secureStationURL.Fields["port"] = os.Getenv("PN_MK7_SECURE_SERVER_PORT")
-	secureStationURL.Fields["CID"] = "1"
-	secureStationURL.Fields["PID"] = "2"
-	secureStationURL.Fields["sid"] = "1"
-	secureStationURL.Fields["stream"] = "10"
-	secureStationURL.Fields["type"] = "2"
+	secureStationURL.SetURLType(constants.StationURLPRUDPS)
+	secureStationURL.SetAddress(os.Getenv("PN_MK7_SECURE_SERVER_HOST"))
+	secureStationURL.SetPortNumber(uint16(port))
+	secureStationURL.SetConnectionID(1)
+	secureStationURL.SetPrincipalID(types.NewPID(2))
+	secureStationURL.SetStreamID(1)
+	secureStationURL.SetStreamType(constants.StreamTypeRVSecure)
+	secureStationURL.SetType(uint8(constants.StationURLFlagPublic))
 
 	commonTicketGrantingProtocol.SecureStationURL = secureStationURL
 	commonTicketGrantingProtocol.BuildName = types.NewString(serverBuildString)
