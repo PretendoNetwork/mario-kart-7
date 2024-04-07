@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PretendoNetwork/nex-go"
-	"github.com/PretendoNetwork/nex-go/types"
+	"github.com/PretendoNetwork/nex-go/v2"
+	"github.com/PretendoNetwork/nex-go/v2/types"
 	pb "github.com/PretendoNetwork/grpc-go/account"
 	"github.com/PretendoNetwork/plogger-go"
 	"github.com/joho/godotenv"

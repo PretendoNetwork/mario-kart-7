@@ -1,8 +1,8 @@
 package nex_matchmake_extension_common
 
 import (
-	"github.com/PretendoNetwork/nex-go/types"
-	matchmaking_types "github.com/PretendoNetwork/nex-protocols-go/match-making/types"
+	"github.com/PretendoNetwork/nex-go/v2/types"
+	matchmaking_types "github.com/PretendoNetwork/nex-protocols-go/v2/match-making/types"
 )
 
 func CleanupSearchMatchmakeSession(matchmakeSession *matchmaking_types.MatchmakeSession) {

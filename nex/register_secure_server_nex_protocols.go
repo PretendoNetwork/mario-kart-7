@@ -2,9 +2,9 @@ package nex
 
 import (
 	"github.com/PretendoNetwork/mario-kart-7/globals"
-	datastore "github.com/PretendoNetwork/nex-protocols-go/datastore"
-	ranking "github.com/PretendoNetwork/nex-protocols-go/ranking"
-	storage_manager "github.com/PretendoNetwork/nex-protocols-go/storage-manager"
+	datastore "github.com/PretendoNetwork/nex-protocols-go/v2/datastore"
+	ranking "github.com/PretendoNetwork/nex-protocols-go/v2/ranking"
+	storage_manager "github.com/PretendoNetwork/nex-protocols-go/v2/storage-manager"
 
 	nex_storage_manager "github.com/PretendoNetwork/mario-kart-7/nex/storage-manager"
 )

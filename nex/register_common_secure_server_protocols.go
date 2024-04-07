@@ -2,16 +2,16 @@ package nex
 
 import (
 	"github.com/PretendoNetwork/mario-kart-7/globals"
-	matchmake_extension "github.com/PretendoNetwork/nex-protocols-go/matchmake-extension"
-	common_matchmake_extension "github.com/PretendoNetwork/nex-protocols-common-go/matchmake-extension"
-	match_making "github.com/PretendoNetwork/nex-protocols-go/match-making"
-	common_match_making "github.com/PretendoNetwork/nex-protocols-common-go/match-making"
-	match_making_ext "github.com/PretendoNetwork/nex-protocols-go/match-making-ext"
-	common_match_making_ext "github.com/PretendoNetwork/nex-protocols-common-go/match-making-ext"
-	nat_traversal "github.com/PretendoNetwork/nex-protocols-go/nat-traversal"
-	common_nat_traversal "github.com/PretendoNetwork/nex-protocols-common-go/nat-traversal"
-	secure "github.com/PretendoNetwork/nex-protocols-go/secure-connection"
-	common_secure "github.com/PretendoNetwork/nex-protocols-common-go/secure-connection"
+	matchmake_extension "github.com/PretendoNetwork/nex-protocols-go/v2/matchmake-extension"
+	common_matchmake_extension "github.com/PretendoNetwork/nex-protocols-common-go/v2/matchmake-extension"
+	match_making "github.com/PretendoNetwork/nex-protocols-go/v2/match-making"
+	common_match_making "github.com/PretendoNetwork/nex-protocols-common-go/v2/match-making"
+	match_making_ext "github.com/PretendoNetwork/nex-protocols-go/v2/match-making-ext"
+	common_match_making_ext "github.com/PretendoNetwork/nex-protocols-common-go/v2/match-making-ext"
+	nat_traversal "github.com/PretendoNetwork/nex-protocols-go/v2/nat-traversal"
+	common_nat_traversal "github.com/PretendoNetwork/nex-protocols-common-go/v2/nat-traversal"
+	secure "github.com/PretendoNetwork/nex-protocols-go/v2/secure-connection"
+	common_secure "github.com/PretendoNetwork/nex-protocols-common-go/v2/secure-connection"
 
 	nex_matchmake_extension_common "github.com/PretendoNetwork/mario-kart-7/nex/matchmake-extension/common"
 )
