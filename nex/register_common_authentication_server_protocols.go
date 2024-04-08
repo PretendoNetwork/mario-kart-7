@@ -4,28 +4,31 @@ import (
 	"os"
 	"strconv"
 
-	nex "github.com/PretendoNetwork/nex-go"
-	ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/ticket-granting"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
+	"github.com/PretendoNetwork/nex-go/v2/constants"
+	"github.com/PretendoNetwork/nex-go/v2/types"
+	common_ticket_granting "github.com/PretendoNetwork/nex-protocols-common-go/v2/ticket-granting"
+	ticket_granting "github.com/PretendoNetwork/nex-protocols-go/v2/ticket-granting"
 )
 
 func registerCommonAuthenticationServerProtocols() {
-	ticketGrantingProtocol := ticket_granting.NewCommonTicketGrantingProtocol(globals.AuthenticationServer)
+	ticketGrantingProtocol := ticket_granting.NewProtocol()
+	globals.AuthenticationEndpoint.RegisterServiceProtocol(ticketGrantingProtocol)
+	commonTicketGrantingProtocol := common_ticket_granting.NewCommonProtocol(ticketGrantingProtocol)
 
 	port, _ := strconv.Atoi(os.Getenv("PN_MK7_SECURE_SERVER_PORT"))
 
-	secureStationURL := nex.NewStationURL("")
-	secureStationURL.SetScheme("prudps")
+	secureStationURL := types.NewStationURL("")
+	secureStationURL.SetURLType(constants.StationURLPRUDPS)
 	secureStationURL.SetAddress(os.Getenv("PN_MK7_SECURE_SERVER_HOST"))
-	secureStationURL.SetPort(uint32(port))
-	secureStationURL.SetCID(1)
-	secureStationURL.SetPID(2)
-	secureStationURL.SetSID(1)
-	secureStationURL.SetStream(10)
-	secureStationURL.SetType(2)
+	secureStationURL.SetPortNumber(uint16(port))
+	secureStationURL.SetConnectionID(1)
+	secureStationURL.SetPrincipalID(types.NewPID(2))
+	secureStationURL.SetStreamID(1)
+	secureStationURL.SetStreamType(constants.StreamTypeRVSecure)
+	secureStationURL.SetType(uint8(constants.StationURLFlagPublic))
 
-	ticketGrantingProtocol.SetSecureStationURL(secureStationURL)
-	ticketGrantingProtocol.SetBuildName(serverBuildString)
-
-	globals.AuthenticationServer.SetPasswordFromPIDFunction(globals.PasswordFromPID)
+	commonTicketGrantingProtocol.SecureStationURL = secureStationURL
+	commonTicketGrantingProtocol.BuildName = types.NewString(serverBuildString)
+	commonTicketGrantingProtocol.SecureServerAccount = globals.SecureServerAccount
 }

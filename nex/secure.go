@@ -3,30 +3,40 @@ package nex
 import (
 	"fmt"
 	"os"
+	"strconv"
 
+	nex "github.com/PretendoNetwork/nex-go/v2"
 	"github.com/PretendoNetwork/mario-kart-7/globals"
-	nex "github.com/PretendoNetwork/nex-go"
 )
 
 func StartSecureServer() {
-	globals.SecureServer = nex.NewServer()
-	globals.SecureServer.SetPRUDPVersion(0)
-	globals.SecureServer.SetDefaultNEXVersion(nex.NewNEXVersion(2, 4, 3))
+	globals.SecureServer = nex.NewPRUDPServer()
 
-	globals.SecureServer.SetAccessKey("6181dff1")
-	globals.SecureServer.SetKerberosPassword(globals.KerberosPassword)
+	globals.SecureEndpoint = nex.NewPRUDPEndPoint(1)
+	globals.SecureEndpoint.IsSecureEndPoint = true
+	globals.SecureEndpoint.ServerAccount = globals.SecureServerAccount
+	globals.SecureEndpoint.AccountDetailsByPID = globals.AccountDetailsByPID
+	globals.SecureEndpoint.AccountDetailsByUsername = globals.AccountDetailsByUsername
+	// * The default silence time is too low for Mario Kart 7, so we set a higher value
+	globals.SecureEndpoint.DefaultStreamSettings.MaxSilenceTime = 20000
+	globals.SecureServer.BindPRUDPEndPoint(globals.SecureEndpoint)
 
-	globals.SecureServer.On("Data", func(packet *nex.PacketV0) {
-		request := packet.RMCRequest()
+	globals.SecureServer.LibraryVersions.SetDefault(nex.NewLibraryVersion(2, 4, 3))
+	globals.SecureServer.AccessKey = "6181dff1"
+
+	globals.SecureEndpoint.OnData(func(packet nex.PacketInterface) {
+		request := packet.RMCMessage()
 
 		fmt.Println("=== MK7 - Secure ===")
-		fmt.Printf("Protocol ID: %#v\n", request.ProtocolID())
-		fmt.Printf("Method ID: %#v\n", request.MethodID())
+		fmt.Printf("Protocol ID: %#v\n", request.ProtocolID)
+		fmt.Printf("Method ID: %#v\n", request.MethodID)
 		fmt.Println("====================")
 	})
 
 	registerCommonSecureServerProtocols()
 	registerSecureServerNEXProtocols()
 
-	globals.SecureServer.Listen(fmt.Sprintf(":%s", os.Getenv("PN_MK7_SECURE_SERVER_PORT")))
+	port, _ := strconv.Atoi(os.Getenv("PN_MK7_SECURE_SERVER_PORT"))
+
+	globals.SecureServer.Listen(port)
 }
