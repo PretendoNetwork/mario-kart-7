@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func PasswordFromPID(pid *types.PID) (string, uint32) {
+func PasswordFromPID(pid types.PID) (string, uint32) {
 	ctx := metadata.NewOutgoingContext(context.Background(), GRPCAccountCommonMetadata)
 
-	response, err := GRPCAccountClient.GetNEXPassword(ctx, &pb.GetNEXPasswordRequest{Pid: pid.LegacyValue()})
+	response, err := GRPCAccountClient.GetNEXPassword(ctx, &pb.GetNEXPasswordRequest{Pid: uint32(pid)})
 	if err != nil {
 		globals.Logger.Error(err.Error())
 		return "", nex.ResultCodes.RendezVous.InvalidUsername
