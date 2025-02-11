@@ -44,13 +44,12 @@ All configuration options are handled via environment variables
 
 `.env` files are supported
 
-| Name                                | Description                                                                                                            | Required                                      |
-|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
-| `PN_MK7_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/mk7?sslmode=disable`)     | Yes                                           |
-| `PN_MK7_KERBEROS_PASSWORD`          | Password used as part of the internal server data in Kerberos tickets                                                  | No (Default password `password` will be used) |
-| `PN_MK7_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                     | Yes                                           |
-| `PN_MK7_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                        | Yes                                           |
-| `PN_MK7_SECURE_SERVER_PORT`         | Port for the secure server                                                                                             | Yes                                           |
-| `PN_MK7_ACCOUNT_GRPC_HOST`          | Host name for your account server gRPC service                                                                         | Yes                                           |
-| `PN_MK7_ACCOUNT_GRPC_PORT`          | Port for your account server gRPC service                                                                              | Yes                                           |
-| `PN_MK7_ACCOUNT_GRPC_API_KEY`       | API key for your account server gRPC service                                                                           | No (Assumed to be an open gRPC API)           |
+| Name                                | Description                                                                                                        | Required                            |
+|-------------------------------------|--------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| `PN_MK7_POSTGRES_URI`               | Fully qualified URI to your Postgres server (Example `postgres://username:password@localhost/mk7?sslmode=disable`) | Yes                                 |
+| `PN_MK7_AUTHENTICATION_SERVER_PORT` | Port for the authentication server                                                                                 | Yes                                 |
+| `PN_MK7_SECURE_SERVER_HOST`         | Host name for the secure server (should point to the same address as the authentication server)                    | Yes                                 |
+| `PN_MK7_SECURE_SERVER_PORT`         | Port for the secure server                                                                                         | Yes                                 |
+| `PN_MK7_ACCOUNT_GRPC_HOST`          | Host name for your account server gRPC service                                                                     | Yes                                 |
+| `PN_MK7_ACCOUNT_GRPC_PORT`          | Port for your account server gRPC service                                                                          | Yes                                 |
+| `PN_MK7_ACCOUNT_GRPC_API_KEY`       | API key for your account server gRPC service                                                                       | No (Assumed to be an open gRPC API) |
