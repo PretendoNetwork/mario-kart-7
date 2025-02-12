@@ -33,6 +33,10 @@ func StartSecureServer() {
 		fmt.Println("====================")
 	})
 
+	globals.SecureEndpoint.OnError(func(err *nex.Error) {
+		globals.Logger.Error(err.Error())
+	})
+
 	registerCommonSecureServerProtocols()
 	registerSecureServerNEXProtocols()
 

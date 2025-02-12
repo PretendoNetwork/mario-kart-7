@@ -15,7 +15,7 @@ func AcquireCardID(err error, packet nex.PacketInterface, callID uint32) (*nex.R
 		return nil, nex.NewError(nex.ResultCodes.Core.Unknown, err.Error())
 	}
 
-	cardID := types.NewPrimitiveU64(rand.Uint64())
+	cardID := types.NewUInt64(rand.Uint64())
 
 	rmcResponseStream := nex.NewByteStreamOut(globals.SecureServer.LibraryVersions, globals.SecureServer.ByteStreamSettings)
 

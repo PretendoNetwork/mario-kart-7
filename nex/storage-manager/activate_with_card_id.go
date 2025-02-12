@@ -10,7 +10,7 @@ import (
 	storage_manager "github.com/PretendoNetwork/nex-protocols-go/v2/storage-manager"
 )
 
-func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, unknown *types.PrimitiveU8, cardID *types.PrimitiveU64) (*nex.RMCMessage, *nex.Error) {
+func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, unknown types.UInt8, cardID types.UInt64) (*nex.RMCMessage, *nex.Error) {
 	if err != nil {
 		globals.Logger.Error(err.Error())
 		return nil, nex.NewError(nex.ResultCodes.Core.InvalidArgument, err.Error())
@@ -18,8 +18,8 @@ func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, un
 
 	client := packet.Sender()
 
-	uniqueID := types.NewPrimitiveU32(0)
-	firstTime := types.NewPrimitiveBool(false)
+	uniqueID := types.NewUInt32(0)
+	firstTime := types.NewBool(false)
 
 	// * It's not guaranteed that the client will call AcquireCardID,
 	// * because that method is only called the first time the client
@@ -27,21 +27,23 @@ func ActivateWithCardID(err error, packet nex.PacketInterface, callID uint32, un
 	// *
 	// * To workaround this, we ignore the card ID stuff and get the
 	// * unique ID using the PID
-	uniqueID.Value, err = database.GetUniqueIDByOwnerPID(client.PID().LegacyValue())
+	rawUniqueID, err := database.GetUniqueIDByOwnerPID(uint32(client.PID()))
 	if err != nil && err != sql.ErrNoRows {
 		globals.Logger.Critical(err.Error())
 		return nil, nex.NewError(nex.ResultCodes.Core.Unknown, err.Error())
 	}
 
 	if err == sql.ErrNoRows {
-		uniqueID.Value, err = database.InsertCommonDataByOwnerPID(client.PID().LegacyValue())
+		rawUniqueID, err = database.InsertCommonDataByOwnerPID(uint32(client.PID()))
 		if err != nil {
 			globals.Logger.Critical(err.Error())
 			return nil, nex.NewError(nex.ResultCodes.Core.Unknown, err.Error())
 		}
 
-		firstTime.Value = true
+		firstTime = true
 	}
+
+	uniqueID = types.NewUInt32(rawUniqueID)
 
 	rmcResponseStream := nex.NewByteStreamOut(globals.SecureServer.LibraryVersions, globals.SecureServer.ByteStreamSettings)
 
